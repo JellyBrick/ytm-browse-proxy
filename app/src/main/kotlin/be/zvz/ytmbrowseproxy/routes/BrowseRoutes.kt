@@ -3,6 +3,7 @@ package be.zvz.ytmbrowseproxy.routes
 import be.zvz.ytmbrowseproxy.dto.YTMBrowse
 import be.zvz.ytmbrowseproxy.utils.JacksonUtils
 import com.fasterxml.jackson.databind.DeserializationFeature
+import guru.zoroark.ratelimit.rateLimited
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -21,6 +22,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.utils.io.jvm.javaio.copyTo
+import java.time.Duration
 
 object BrowseRoutes {
     private val httpClient =
@@ -34,24 +36,29 @@ object BrowseRoutes {
         }
 
     fun Route.browseRouting() {
-        route("/browse") {
-            post {
-                val browseRequest = call.receive<YTMBrowse>()
+        rateLimited(
+            limit = 2,
+            timeBeforeReset = Duration.ofSeconds(1),
+        ) {
+            route("/browse") {
+                post {
+                    val browseRequest = call.receive<YTMBrowse>()
 
-                val request =
-                    HttpRequestBuilder().apply {
-                        method = HttpMethod.Post
-                        url("https://youtubei.googleapis.com/youtubei/v1/browse?prettyPrint=false")
-                        setBody(
-                            YTMBrowse(
-                                browseId = browseRequest.browseId,
-                                context = browseRequest.context,
-                            ),
-                        )
-                        contentType(ContentType.Application.Json)
+                    val request =
+                        HttpRequestBuilder().apply {
+                            method = HttpMethod.Post
+                            url("https://youtubei.googleapis.com/youtubei/v1/browse?prettyPrint=false")
+                            setBody(
+                                YTMBrowse(
+                                    browseId = browseRequest.browseId,
+                                    context = browseRequest.context,
+                                ),
+                            )
+                            contentType(ContentType.Application.Json)
+                        }
+                    call.respondOutputStream(ContentType.Application.Json) {
+                        httpClient.post(request).bodyAsChannel().copyTo(this)
                     }
-                call.respondOutputStream(ContentType.Application.Json) {
-                    httpClient.post(request).bodyAsChannel().copyTo(this)
                 }
             }
         }
