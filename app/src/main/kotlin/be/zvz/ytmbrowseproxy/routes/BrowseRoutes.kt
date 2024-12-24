@@ -37,26 +37,24 @@ object BrowseRoutes {
 
     fun Route.browseRouting() {
         route("/browse") {
-            post {
-                rateLimit {
-                    handle {
-                        val browseRequest = call.receive<YTMBrowse>()
+            rateLimit {
+                post {
+                    val browseRequest = call.receive<YTMBrowse>()
 
-                        val request =
-                            HttpRequestBuilder().apply {
-                                method = HttpMethod.Post
-                                url("https://youtubei.googleapis.com/youtubei/v1/browse?prettyPrint=false")
-                                setBody(
-                                    YTMBrowse(
-                                        browseId = browseRequest.browseId,
-                                        context = browseRequest.context,
-                                    ),
-                                )
-                                contentType(ContentType.Application.Json)
-                            }
-                        call.respondOutputStream(ContentType.Application.Json) {
-                            httpClient.post(request).bodyAsChannel().copyTo(this)
+                    val request =
+                        HttpRequestBuilder().apply {
+                            method = HttpMethod.Post
+                            url("https://youtubei.googleapis.com/youtubei/v1/browse?prettyPrint=false")
+                            setBody(
+                                YTMBrowse(
+                                    browseId = browseRequest.browseId,
+                                    context = browseRequest.context,
+                                ),
+                            )
+                            contentType(ContentType.Application.Json)
                         }
+                    call.respondOutputStream(ContentType.Application.Json) {
+                        httpClient.post(request).bodyAsChannel().copyTo(this)
                     }
                 }
             }
