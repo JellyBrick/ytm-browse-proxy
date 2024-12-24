@@ -32,6 +32,7 @@ dependencies {
     implementation(group = "io.ktor", name = "ktor-server-forwarded-header", version = "3.0.3")
     implementation(group = "io.ktor", name = "ktor-serialization-jackson", version = "3.0.3")
     implementation(group = "io.ktor", name = "ktor-server-rate-limit", version = "3.0.3")
+    implementation(group = "io.ktor", name = "ktor-server-cors", version = "3.0.3")
 
     implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = "2.18.2")
     implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-blackbird", version = "2.18.2")
