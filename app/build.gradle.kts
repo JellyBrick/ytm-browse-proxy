@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation(group = "io.ktor", name = "ktor-client-apache", version = "3.0.3")
+    implementation(group = "io.ktor", name = "ktor-client-apache", version = "3.1.1")
     implementation(group = "io.ktor", name = "ktor-client-content-negotiation", version = "3.0.3")
 
     implementation(group = "io.ktor", name = "ktor-server-core-jvm", version = "3.0.3")
