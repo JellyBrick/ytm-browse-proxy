@@ -37,7 +37,7 @@ dependencies {
     implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = "2.18.2")
     implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-blackbird", version = "2.18.2")
 
-    implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.5.15")
+    implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.5.18")
 
     implementation(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8")
     implementation(group = "org.jetbrains.kotlin", name = "kotlin-reflect")
