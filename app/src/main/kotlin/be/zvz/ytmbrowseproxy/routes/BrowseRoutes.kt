@@ -1,8 +1,10 @@
 package be.zvz.ytmbrowseproxy.routes
 
 import be.zvz.ytmbrowseproxy.dto.YTMBrowse
+import com.ensody.kompressor.brotli.ktor.BrotliContentEncoder
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache5.Apache5
+import io.ktor.client.plugins.compression.ContentEncoding
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.post
@@ -28,6 +30,13 @@ object BrowseRoutes {
         HttpClient(Apache5) {
             install(ContentNegotiation) {
                 jsonIo()
+            }
+
+            install(ContentEncoding) {
+                gzip()
+                deflate()
+                customEncoder(BrotliContentEncoder())
+                identity()
             }
         }
 

@@ -26,9 +26,16 @@ repositories {
 dependencies {
     implementation(group = "io.ktor", name = "ktor-client-apache5", version = "3.5.1")
     implementation(group = "io.ktor", name = "ktor-client-content-negotiation", version = "3.5.1")
+    implementation(group = "io.ktor", name = "ktor-client-encoding", version = "3.5.1")
 
     implementation(group = "io.ktor", name = "ktor-server-core-jvm", version = "3.5.1")
     implementation(group = "io.ktor", name = "ktor-server-netty-jvm", version = "3.5.1")
+    implementation(group = "io.ktor", name = "ktor-server-compression", version = "3.5.1")
+    implementation(group = "io.ktor", name = "ktor-server-compression-zstd", version = "3.5.1")
+
+    implementation(group = "com.ensody.kompressor", name = "kompressor-ktor", version = "0.5.0")
+    implementation(group = "com.ensody.kompressor", name = "kompressor-brotli-ktor", version = "0.5.0")
+
     implementation(group = "io.ktor", name = "ktor-server-content-negotiation", version = "3.5.1")
     implementation(group = "io.ktor", name = "ktor-server-forwarded-header", version = "3.5.1")
     implementation(group = "io.ktor", name = "ktor-serialization-kotlinx-json-jvm", version = "3.5.1")
