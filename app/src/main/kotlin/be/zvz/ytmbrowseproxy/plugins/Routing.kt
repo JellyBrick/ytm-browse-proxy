@@ -1,16 +1,15 @@
 package be.zvz.ytmbrowseproxy.plugins
 
 import be.zvz.ytmbrowseproxy.routes.BrowseRoutes.browseRouting
-import com.ensody.kompressor.brotli.ktor.BrotliContentEncoder
-import com.ensody.kompressor.zlib.ktor.DeflateContentEncoder
-import com.ensody.kompressor.zlib.ktor.GzipContentEncoder
-import com.ensody.kompressor.zstd.ktor.ZstdContentEncoder
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.compression.Compression
+import io.ktor.server.plugins.compression.deflate
+import io.ktor.server.plugins.compression.gzip
 import io.ktor.server.plugins.compression.identity
+import io.ktor.server.plugins.compression.zstd.zstd
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.forwardedheaders.ForwardedHeaders
 import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
@@ -25,7 +24,7 @@ object Routing {
         install(XForwardedHeaders)
         install(RateLimit) {
             register {
-                rateLimiter(limit = 2, refillPeriod = 1.seconds)
+                rateLimiter(limit = 4, refillPeriod = 1.seconds)
                 requestKey { call ->
                     call.request.origin.remoteAddress
                 }
@@ -39,10 +38,9 @@ object Routing {
             anyHost()
         }
         install(Compression) {
-            encoder(ZstdContentEncoder(3))
-            encoder(DeflateContentEncoder())
-            encoder(GzipContentEncoder(6))
-            encoder(BrotliContentEncoder(4))
+            zstd(3) { priority = 1.0 }
+            gzip { priority = 0.9 }
+            deflate { priority = 0.2 }
             identity()
         }
 

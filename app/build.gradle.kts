@@ -31,11 +31,7 @@ dependencies {
     implementation(group = "io.ktor", name = "ktor-server-core-jvm", version = "3.5.1")
     implementation(group = "io.ktor", name = "ktor-server-netty-jvm", version = "3.5.1")
     implementation(group = "io.ktor", name = "ktor-server-compression", version = "3.5.1")
-
-    implementation(group = "com.ensody.kompressor", name = "kompressor-ktor", version = "0.5.0")
-    implementation(group = "com.ensody.kompressor", name = "kompressor-zstd-ktor", version = "0.5.0")
-    implementation(group = "com.ensody.kompressor", name = "kompressor-zlib-ktor", version = "0.5.0")
-    implementation(group = "com.ensody.kompressor", name = "kompressor-brotli-ktor", version = "0.5.0")
+    implementation(group = "io.ktor", name = "ktor-server-compression-zstd", version = "3.5.1")
 
     implementation(group = "com.ensody.nativebuilds", name = "zstd-libzstd", version = "1.5.7.4")
     implementation(group = "com.ensody.nativebuilds", name = "zlib-libz", version = "1.3.1.4")

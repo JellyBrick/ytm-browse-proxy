@@ -1,30 +1,25 @@
 package be.zvz.ytmbrowseproxy.routes
 
 import be.zvz.ytmbrowseproxy.dto.YTMBrowse
-import com.ensody.kompressor.brotli.ktor.BrotliContentEncoder
-import com.ensody.kompressor.zlib.ktor.DeflateContentEncoder
-import com.ensody.kompressor.zlib.ktor.GzipContentEncoder
-import com.ensody.kompressor.zstd.ktor.ZstdContentEncoder
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache5.Apache5
 import io.ktor.client.plugins.compression.ContentEncoding
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.post
+import io.ktor.client.request.preparePost
 import io.ktor.client.request.setBody
-import io.ktor.client.request.url
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.ContentType
-import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.OutgoingContent
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.jsonIo
 import io.ktor.server.plugins.ratelimit.rateLimit
 import io.ktor.server.request.receive
-import io.ktor.server.response.respondBytesWriter
+import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import io.ktor.utils.io.copyTo
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.serialization.ExperimentalSerializationApi
 
 object BrowseRoutes {
@@ -37,10 +32,8 @@ object BrowseRoutes {
 
             install(ContentEncoding) {
                 // faster -> slower
-                customEncoder(ZstdContentEncoder(3), 1.0F)
-                customEncoder(BrotliContentEncoder(4), 0.9F)
-                customEncoder(GzipContentEncoder(6), 0.8F)
-                customEncoder(DeflateContentEncoder())
+                gzip(1.0F)
+                deflate(0.1F)
                 identity()
             }
         }
@@ -51,22 +44,17 @@ object BrowseRoutes {
                 post {
                     val browseRequest = call.receive<YTMBrowse>()
 
-                    call.respondBytesWriter(ContentType.Application.Json) {
-                        httpClient
-                            .post(
-                                HttpRequestBuilder().apply {
-                                    method = HttpMethod.Post
-                                    url("https://youtubei.googleapis.com/youtubei/v1/browse?prettyPrint=false")
-                                    setBody(
-                                        YTMBrowse(
-                                            browseId = browseRequest.browseId,
-                                            context = browseRequest.context,
-                                        ),
-                                    )
-                                    contentType(ContentType.Application.Json)
-                                },
-                            ).bodyAsChannel()
-                            .copyTo(this)
+                    httpClient.preparePost("https://youtubei.googleapis.com/youtubei/v1/browse?prettyPrint=false") {
+                        contentType(ContentType.Application.Json)
+                        setBody(YTMBrowse(browseId = browseRequest.browseId, context = browseRequest.context))
+                    }.execute { upstream ->
+                        val body = upstream.bodyAsChannel()
+
+                        call.respond(object : OutgoingContent.ReadChannelContent() {
+                            override val contentType: ContentType = ContentType.Application.Json
+                            override val status: HttpStatusCode = upstream.status
+                            override fun readFrom(): ByteReadChannel = body
+                        })
                     }
                 }
             }
