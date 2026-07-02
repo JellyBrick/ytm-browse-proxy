@@ -2,6 +2,9 @@ package be.zvz.ytmbrowseproxy.routes
 
 import be.zvz.ytmbrowseproxy.dto.YTMBrowse
 import com.ensody.kompressor.brotli.ktor.BrotliContentEncoder
+import com.ensody.kompressor.zlib.ktor.DeflateContentEncoder
+import com.ensody.kompressor.zlib.ktor.GzipContentEncoder
+import com.ensody.kompressor.zstd.ktor.ZstdContentEncoder
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache5.Apache5
 import io.ktor.client.plugins.compression.ContentEncoding
@@ -33,8 +36,9 @@ object BrowseRoutes {
             }
 
             install(ContentEncoding) {
-                gzip()
-                deflate()
+                customEncoder(GzipContentEncoder())
+                customEncoder(DeflateContentEncoder())
+                customEncoder(ZstdContentEncoder())
                 customEncoder(BrotliContentEncoder())
                 identity()
             }
