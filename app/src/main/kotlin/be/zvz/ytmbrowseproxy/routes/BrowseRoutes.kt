@@ -15,11 +15,11 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.jsonIo
 import io.ktor.server.plugins.ratelimit.rateLimit
 import io.ktor.server.request.receive
-import io.ktor.server.response.respondOutputStream
+import io.ktor.server.response.respondBytesWriter
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import io.ktor.utils.io.jvm.javaio.copyTo
+import io.ktor.utils.io.copyTo
 import kotlinx.serialization.ExperimentalSerializationApi
 
 object BrowseRoutes {
@@ -37,20 +37,20 @@ object BrowseRoutes {
                 post {
                     val browseRequest = call.receive<YTMBrowse>()
 
-                    val request =
-                        HttpRequestBuilder().apply {
-                            method = HttpMethod.Post
-                            url("https://youtubei.googleapis.com/youtubei/v1/browse?prettyPrint=false")
-                            setBody(
-                                YTMBrowse(
-                                    browseId = browseRequest.browseId,
-                                    context = browseRequest.context,
-                                ),
-                            )
-                            contentType(ContentType.Application.Json)
-                        }
-                    call.respondOutputStream(ContentType.Application.Json) {
-                        httpClient.post(request)
+                    call.respondBytesWriter(ContentType.Application.Json) {
+                        httpClient.post(
+                            HttpRequestBuilder().apply {
+                                method = HttpMethod.Post
+                                url("https://youtubei.googleapis.com/youtubei/v1/browse?prettyPrint=false")
+                                setBody(
+                                    YTMBrowse(
+                                        browseId = browseRequest.browseId,
+                                        context = browseRequest.context,
+                                    ),
+                                )
+                                contentType(ContentType.Application.Json)
+                            }
+                        )
                             .bodyAsChannel()
                             .copyTo(this)
                     }
