@@ -36,6 +36,7 @@ dependencies {
     implementation(group = "io.ktor", name = "ktor-server-cors", version = "3.5.1")
 
     implementation(group = "ch.qos.logback", name = "logback-classic", version = "1.5.37")
+    implementation(group = "org.fusesource.jansi", name = "jansi", version = "2.4.3")
 
     implementation(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8")
     implementation(group = "org.jetbrains.kotlin", name = "kotlin-reflect")
