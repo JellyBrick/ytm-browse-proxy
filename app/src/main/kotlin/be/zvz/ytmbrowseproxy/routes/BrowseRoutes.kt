@@ -38,20 +38,20 @@ object BrowseRoutes {
                     val browseRequest = call.receive<YTMBrowse>()
 
                     call.respondBytesWriter(ContentType.Application.Json) {
-                        httpClient.post(
-                            HttpRequestBuilder().apply {
-                                method = HttpMethod.Post
-                                url("https://youtubei.googleapis.com/youtubei/v1/browse?prettyPrint=false")
-                                setBody(
-                                    YTMBrowse(
-                                        browseId = browseRequest.browseId,
-                                        context = browseRequest.context,
-                                    ),
-                                )
-                                contentType(ContentType.Application.Json)
-                            }
-                        )
-                            .bodyAsChannel()
+                        httpClient
+                            .post(
+                                HttpRequestBuilder().apply {
+                                    method = HttpMethod.Post
+                                    url("https://youtubei.googleapis.com/youtubei/v1/browse?prettyPrint=false")
+                                    setBody(
+                                        YTMBrowse(
+                                            browseId = browseRequest.browseId,
+                                            context = browseRequest.context,
+                                        ),
+                                    )
+                                    contentType(ContentType.Application.Json)
+                                },
+                            ).bodyAsChannel()
                             .copyTo(this)
                     }
                 }

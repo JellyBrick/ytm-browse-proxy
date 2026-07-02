@@ -20,8 +20,8 @@ object Routing {
         install(RateLimit) {
             register {
                 rateLimiter(limit = 2, refillPeriod = 1.seconds)
-                requestKey {
-                        call -> call.request.origin.remoteAddress
+                requestKey { call ->
+                    call.request.origin.remoteAddress
                 }
             }
         }
