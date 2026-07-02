@@ -39,10 +39,10 @@ object Routing {
             anyHost()
         }
         install(Compression) {
-            encoder(GzipContentEncoder())
-            encoder(ZstdContentEncoder())
+            encoder(ZstdContentEncoder(3))
             encoder(DeflateContentEncoder())
-            encoder(BrotliContentEncoder())
+            encoder(GzipContentEncoder(6))
+            encoder(BrotliContentEncoder(4))
             identity()
         }
 

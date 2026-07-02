@@ -36,10 +36,11 @@ object BrowseRoutes {
             }
 
             install(ContentEncoding) {
-                customEncoder(GzipContentEncoder())
+                // faster -> slower
+                customEncoder(ZstdContentEncoder(3), 1.0F)
+                customEncoder(BrotliContentEncoder(4), 0.9F)
+                customEncoder(GzipContentEncoder(6), 0.8F)
                 customEncoder(DeflateContentEncoder())
-                customEncoder(ZstdContentEncoder())
-                customEncoder(BrotliContentEncoder())
                 identity()
             }
         }
